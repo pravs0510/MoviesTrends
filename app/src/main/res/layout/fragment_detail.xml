@@ -1,0 +1,150 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.example.android.moviestrends.PlaceholderFragment"
+    >
+    <ScrollView
+        android:layout_width="fill_parent" android:layout_height="fill_parent">
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id= "@+id/relayout">
+            <!--Text view for the Title-->
+            <TextView
+                android:id="@+id/detail_text"
+                android:layout_width="match_parent"
+                android:layout_height="120dp"
+                android:textSize="30dp"
+                android:textColor="#FFFFFF"
+                android:paddingTop="5dp"
+                android:paddingLeft="5dp"
+                android:background="#00BFA5"/>
+            <!--Image view for the poster-->
+            <ImageView
+                android:layout_width="140dp"
+                android:layout_height="200dp"
+                android:id="@+id/poster_path"
+                android:layout_marginTop="10dp"
+                android:layout_marginLeft="25dp"
+                android:layout_marginBottom="10dp"
+                android:layout_marginRight="10dp"
+                android:layout_below="@+id/detail_text"
+                android:background="#000000"
+                android:scaleType="centerCrop"/>
+
+            <!--Text view for the Ratings
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textStyle="italic"
+                android:textSize="12dp"
+                android:padding="8dp"
+                android:id="@+id/Rating_text"
+                android:layout_below="@+id/detail_text"
+                android:layout_toRightOf="@+id/poster_path"/>-->
+            <!--Text view for the Rating retrieved from the main screen-->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="12dp"
+                android:textStyle="bold"
+                android:padding="8dp"
+                android:id="@+id/Rating"
+                android:layout_toRightOf="@+id/poster_path"
+                android:layout_below="@+id/detail_text" />
+            <!--&lt;!&ndash;Text view for the Release date&ndash;&gt;
+            <TextView
+                android:padding="8dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/release_date"
+                android:textStyle="italic"
+                android:textSize="12dp"
+                android:layout_below="@+id/Rating"
+                android:layout_toRightOf="@+id/poster_path"/>-->
+            <!--Text view for the Release Date retrieved from the main screen-->
+            <TextView
+                android:padding="8dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/release"
+                android:textSize="12dp"
+                android:textStyle="bold"
+                android:layout_toRightOf="@+id/poster_path"
+                android:layout_below="@+id/Rating"/>
+            <!--button view for the mark as favorite of the movie-->
+            <CheckBox
+                android:id="@+id/favorite"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/release"
+                android:padding="8dp"
+                android:onClick="MarkAsFav"
+                android:text="MARK AS FAVORITE"
+                style="?android:attr/starStyle"
+                android:textAllCaps="true"
+                android:layout_toRightOf="@+id/poster_path"
+                android:clickable="true" />
+
+
+            <!--Text view for the Overview of the movie-->
+
+            <!--Image view for the line-->
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/lineImage1"
+                android:background="@drawable/line"
+                android:padding="5dp"
+                android:layout_below="@+id/poster_path"/>
+            <!--Text view for the OverView of the movie from the main screen-->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingLeft="5dp"
+                android:paddingBottom="5dp"
+                android:textStyle="italic"
+                android:id="@+id/Overview_text"
+                android:textSize="15dp"
+                android:layout_below="@+id/lineImage1"/>
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="5dp"
+                android:id="@+id/Overview"
+                android:textSize="12dp"
+                android:layout_below="@+id/Overview_text"/>
+            <!--Image view for the line-->
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/lineimage2"
+                android:background="@drawable/line"
+                android:padding="5dp"
+                android:layout_below="@+id/Overview"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="15dp"
+                android:id="@+id/trailer_text"
+                android:text = "Trailer"
+                android:textStyle="bold"
+                android:layout_below="@+id/lineimage2"
+                android:textSize="15dp"/>
+
+            <ImageView
+                android:background="@drawable/playbutton"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:padding="15dp"
+                android:id="@+id/trailer"
+                android:onClick="Trailer"
+                android:layout_below="@+id/trailer_text" />
+
+
+        </RelativeLayout>
+    </ScrollView>
+</RelativeLayout>
+
+

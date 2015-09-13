@@ -1,0 +1,80 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:context="com.example.android.moviestrends.PlaceholderFragment">
+    <ScrollView
+        android:layout_width="fill_parent" android:layout_height="fill_parent">
+         <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+                <!--Image view for the poster-->
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="180dp"
+                android:id="@+id/poster_path" />
+            <!--Text view for the Title-->
+            <TextView
+                android:id="@+id/detail_text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="25dp"
+                android:layout_below="@+id/poster_path" />
+            <!--Text view for the Ratings -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textStyle="italic"
+                android:textSize="12dp"
+                android:padding="8dp"
+                android:id="@+id/Rating_text"
+                android:layout_below="@+id/detail_text"/>
+            <!--Text view for the Rating retrieved from the main screen-->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="12dp"
+                android:padding="8dp"
+                android:id="@+id/Rating"
+                android:layout_toRightOf="@id/Rating_text"
+                android:layout_below="@+id/detail_text"/>
+            <!--Text view for the Release date-->
+            <TextView
+                android:padding="8dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/release_date"
+                android:textStyle="italic"
+                android:textSize="12dp"
+                android:layout_below="@+id/Rating"/>
+            <!--Text view for the Release Date retrieved from the main screen-->
+            <TextView
+                android:padding="8dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/release"
+                android:textSize="12dp"
+                android:layout_toRightOf="@id/release_date"
+                android:layout_below="@+id/Rating"/>
+            <!--Text view for the Overview of the movie-->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="8dp"
+                android:textStyle="italic"
+                android:id="@+id/Overview_text"
+                android:textSize="15dp"
+                android:layout_below="@+id/release"/>
+            <!--Text view for the OverView of the movie from the main screen-->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="5dp"
+                android:id="@+id/Overview"
+                android:textSize="12dp"
+                android:layout_below="@+id/Overview_text"/>
+        </RelativeLayout>
+    </ScrollView>
+</RelativeLayout>
+
+
