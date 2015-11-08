@@ -61,7 +61,7 @@
 
 <!-- Update the apikey provided in README text in the tag below . Replace the xxxx with the key -->
 
-    <string name="apiKey">b5589027deee41f235c2e8085fbe846e</string>
+    <string name="apiKey">xxxx</string>
     <string name="SortPrev">SortPrev</string>
     <string name="append_to_response">append_to_response</string>
     <string name="trailers_reviews">trailers,reviews</string>
