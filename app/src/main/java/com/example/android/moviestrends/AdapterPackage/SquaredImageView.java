@@ -12,7 +12,7 @@ import android.widget.ImageView;
 
 /** This class is used to create a custom image View , this overrides onMeasure method of image view to give a custom measurement */
 
-final class SquaredImageView extends ImageView {
+public final class SquaredImageView extends ImageView {
     public final Double MEASURED_WIDTH = 1.43;
     public SquaredImageView(Context context) {
         super(context);

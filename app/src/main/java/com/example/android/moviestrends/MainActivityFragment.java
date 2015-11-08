@@ -20,7 +20,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.GridView;
+import android.widget.ListView;
 import android.widget.ProgressBar;
+import android.widget.Toast;
 
 import com.example.android.moviestrends.AdapterPackage.ArrayObj;
 import com.example.android.moviestrends.AdapterPackage.ImageAdapter;
@@ -51,9 +53,13 @@ public class MainActivityFragment extends Fragment {
       //  private ArrayList<ArrayObj> list_of_movies = new ArrayList<>();
     ProgressBar progressBar ;
     private ImageAdapter mImageAdapter;
-    private ArrayObj listOfMovies;
-    private boolean firstTime = true;
-
+    private static boolean favMovies = false;
+    GridView gridView;
+    private int mPosition = ListView.INVALID_POSITION;
+    public interface Callback{
+        /*A callback interface that all activities containing this fragment must implement. This mechanism allows activities to be notified of item Selections  */
+        public void onItemSelected( ArrayObj movieItem,boolean favMovies);
+    }
     public MainActivityFragment() {
     }
 
@@ -68,6 +74,7 @@ public class MainActivityFragment extends Fragment {
         } else {
             mMoviesAdaptor = savedInstanceState.getParcelableArrayList(getString(R.string.Movies_key));// using the key retrieve the data
             sortTypePrev = savedInstanceState.getString(getString(R.string.SortPrev));
+            mPosition    = savedInstanceState.getInt("position");
         }
         // Add this line in order for this fragment to handle menu events.
         setHasOptionsMenu(true);
@@ -84,6 +91,7 @@ public class MainActivityFragment extends Fragment {
 
         outState.putParcelableArrayList(getString(R.string.Movies_key), mMoviesAdaptor); // need to pass the bundle to save the current state
         outState.putString(getString(R.string.SortPrev), sortTypePrev);
+        outState.putInt("position",mPosition);
     }
 
     @Override
@@ -104,6 +112,7 @@ public class MainActivityFragment extends Fragment {
                 return true;
             case R.id.action_favorite:
                 mMoviesAdaptor = new ArrayList();
+                favMovies = true;
                 updateFavoriteMovie();
                 return true;
         }
@@ -114,7 +123,7 @@ public class MainActivityFragment extends Fragment {
     /*
        Private class which is used to get the sort preferences from the settings and pass it to the Async task. This method does not require any input parameters
      */
-    private void updateMovie() {
+     void updateMovie() {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
         String sortType = prefs.getString(getString(R.string.pref_sortKey), getString(R.string.sortDefault));
 
@@ -123,10 +132,14 @@ public class MainActivityFragment extends Fragment {
             moviesDataTask moviesTask = new moviesDataTask();
             moviesTask.execute(sortType);
         }
+         if(mPosition!=ListView.INVALID_POSITION){
+             gridView.setSelection(mPosition);
+             gridView.smoothScrollToPosition(mPosition);
+         }
     }
-    private void updateFavoriteMovie() {
+     void updateFavoriteMovie() {
 
-        ArrayObj movie = new ArrayObj();
+        ArrayObj movie ;
         movies.clear();
         Cursor movieCursor = getActivity().getContentResolver().query(
                 movieTrendsContract.MoviesEntry.CONTENT_URI,
@@ -138,16 +151,8 @@ public class MainActivityFragment extends Fragment {
             movie = new ArrayObj();
             int moviesIdx = movieCursor.getColumnIndex(movieTrendsContract.MoviesEntry._ID);
             movie.original_title = movieCursor.getString(movieCursor.getColumnIndex(movieTrendsContract.MoviesEntry.MOVIE_NAME));
-            movie.overview = movieCursor.getString(movieCursor.getColumnIndex(movieTrendsContract.MoviesEntry.OVERVIEW));
-            movie.original_language = " ";
-            movie.backdrop_path = " ";
-            movie.release_date = movieCursor.getString(movieCursor.getColumnIndex(movieTrendsContract.MoviesEntry.RELEASE_DATE));
             movie.poster_path = movieCursor.getString(movieCursor.getColumnIndex(movieTrendsContract.MoviesEntry.POSTER_PATH));
-            movie.popularity = 1.0;
-            movie.video = " ";
-            movie.vote_average = 1.0;
-            movie.vote_count = 1.0;
-            movie.adult = " ";
+            movie.id = movieCursor.getString(movieCursor.getColumnIndex(movieTrendsContract.MoviesEntry.MOVIE_ID));
             movies.add(movie);
         }
         movieCursor.close();
@@ -156,7 +161,8 @@ public class MainActivityFragment extends Fragment {
                 for (ArrayObj movieObj : movies)
                     mMoviesAdaptor.add(movieObj);
                 mImageAdapter.setGridData(mMoviesAdaptor);
-            }
+            }else
+                Toast.makeText(getActivity(),"No Movies in your favorites",Toast.LENGTH_SHORT).show();
         }
 
      /*
@@ -177,29 +183,31 @@ public class MainActivityFragment extends Fragment {
                 , R.layout.image_item
                 , mMoviesAdaptor);
         View rootView = inflater.inflate(R.layout.fragment_main, fragment, false);
-        GridView gridView = (GridView) rootView.findViewById(R.id.grid);
+         gridView = (GridView) rootView.findViewById(R.id.grid);
             progressBar = (ProgressBar) rootView.findViewById(R.id.progress_bar);
             progressBar.setVisibility(View.INVISIBLE);
 
          gridView.setAdapter(mImageAdapter);
 
+         gridView.setSelector(R.drawable.touch_selector);
+        gridView.setDrawSelectorOnTop(true);
+        if (savedInstanceState!= null) {
+            gridView.setSelection(mPosition);
+        }
         gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                view.setActivated(true);
                 ArrayObj movieItem = mImageAdapter.getItem(i);
-                // Toast.makeText(getActivity(),"You have clicked on " + movieItem.original_title,Toast.LENGTH_SHORT).show();
+                mPosition = i;
                 Bundle bundle = new Bundle();
-                //bundle.putStringArray(key,movieItem);
-            //    if (movieItem.backdrop_path.equals("null")) {
-             //       movieItem.backdrop_path = movieItem.poster_path;
-           //     }
-                Intent intent = new Intent(getActivity(), DetailActivity.class).putExtra(Intent.EXTRA_TEXT, movieItem.original_title)
+                ( (Callback) getActivity()).onItemSelected(movieItem,favMovies);
+               /* Intent intent = new Intent(getActivity(), DetailActivity.class).putExtra(Intent.EXTRA_TEXT, movieItem.original_title)
                         .putExtra(getString(R.string.poster_path), movieItem.poster_path)
-                        .putExtra(getString(R.string.overview), movieItem.overview)
-                        .putExtra(getString(R.string.Ratings), (movieItem.vote_average + getString(R.string.byTen)))
-                        .putExtra(getString(R.string.Release), movieItem.release_date);
+                        .putExtra(getString(R.string.id), movieItem.id)
+                        .putExtra(getString(R.string.favMovie),favMovies);
 
-                startActivity(intent);
+                startActivity(intent);*/
 
             }
         });
@@ -221,36 +229,21 @@ public class MainActivityFragment extends Fragment {
          //   Log.e(LOG_TAG, "movieDataParse class is called");
             movies.clear();
             final String OWM_LIST = getString(R.string.results);
-
-            final String OWM_ADULT = getString(R.string.adult);
-            final String OWM_BACKDROP_PATH = getString(R.string.backdrop_path);
-            final String OWM_OVERVIEW = getString(R.string.overview);
-            final String OWN_ORIGINAL_LANG = getString(R.string.original_language);
+            final String OWM_ID =getString(R.string.id);
             final String OWM_ORIGINAL_TITLE = getString(R.string.original_title);
-            final String OWN_REL_DTE = getString(R.string.Release);
             final String OWM_POSTER = getString(R.string.poster_path);
-            final String OWM_POPULARITY = getString(R.string.popularity);
-            final String OWN_VIDEO = getString(R.string.video);
-            final String OWN_VOTE_AVG = getString(R.string.vote_average);
-            final String OWN_VOTE_CNT = getString(R.string.vote_count);
+
 
             JSONObject movieJson = new JSONObject(movieDataJ);
             JSONArray movieArray = movieJson.getJSONArray(OWM_LIST);
             for (int i = 0; i < movieArray.length(); i++) {
                 ArrayObj movie = new ArrayObj();
                 JSONObject movieDetails = movieArray.getJSONObject(i);
-
-                movie.backdrop_path = movieDetails.getString(OWM_BACKDROP_PATH);
-                movie.overview = movieDetails.getString(OWM_OVERVIEW);
-                movie.original_language = movieDetails.getString(OWN_ORIGINAL_LANG);
+                movie.id=movieDetails.getString(OWM_ID);
                 movie.original_title = movieDetails.getString(OWM_ORIGINAL_TITLE);
-                movie.release_date = movieDetails.getString(OWN_REL_DTE);
                 movie.poster_path = movieDetails.getString(OWM_POSTER);
-                movie.popularity = movieDetails.getDouble(OWM_POPULARITY);
-                movie.video = movieDetails.getString(OWN_VIDEO);
-                movie.vote_average = movieDetails.getDouble(OWN_VOTE_AVG);
-                movie.vote_count = movieDetails.getDouble(OWN_VOTE_CNT);
-                movie.adult = movieDetails.getString(OWM_ADULT);
+                movie.id=movieDetails.getString(OWM_ID);
+
                 movies.add(movie);
             }
             return movies;

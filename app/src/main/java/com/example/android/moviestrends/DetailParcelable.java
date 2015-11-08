@@ -14,6 +14,7 @@ This Class implements Parcelable for detail Activity screen.
  */
 public class DetailParcelable implements Parcelable {
 
+    String id;
     String originalTitle;
     String posterPath;
     String overview;
@@ -25,8 +26,9 @@ public class DetailParcelable implements Parcelable {
     @Param originalTitle, posterPath,overview,userRatings,releaseDate
      */
 
-    public DetailParcelable(String originalTitle, String posterPath, String overview, String userRatings, String releaseDate)
+    public DetailParcelable(String originalTitle, String posterPath, String overview, String userRatings, String releaseDate, String id)
     {
+        this.id = id;
         this.originalTitle = originalTitle;
         this.posterPath = posterPath;
         this.overview = overview;
@@ -38,6 +40,7 @@ public class DetailParcelable implements Parcelable {
 
      */
     private DetailParcelable(Parcel in){
+        id = in.readString();
         originalTitle = in.readString();
         posterPath = in.readString();
         overview = in.readString();
@@ -50,6 +53,7 @@ public class DetailParcelable implements Parcelable {
     }
     @Override
     public void writeToParcel(Parcel parcel, int i) {
+        parcel.writeString(id);
         parcel.writeString(originalTitle);
         parcel.writeString(posterPath);
         parcel.writeString(overview);

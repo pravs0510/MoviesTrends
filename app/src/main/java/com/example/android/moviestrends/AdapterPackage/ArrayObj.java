@@ -14,56 +14,61 @@ import android.os.Parcelable;
 
 public class ArrayObj implements Parcelable{
     // public String thumb;
-    public String title;
+    public String id;
     public String adult;
     public String backdrop_path;
-
     public String overview;
     public String original_language;
     public String original_title;
     public String release_date;
+    public String status;
+    public String runtime;
     public String poster_path;
-    public Double popularity;
-    public String video;
-    public Double vote_average;
-    public Double vote_count;
+     public String vote_average;
+    public String vote_count;
+    public String trailer_id;
+    public String genre_id;
 
 /*
   the constructor1 which is called when the parcel has to be decoded.
   @Param in is type parcel which is then copied to individual parameter
    */
         private ArrayObj(Parcel in) {
-
-            title = in.readString();
+            id = in.readString();
             adult = in.readString();
             backdrop_path = in.readString();
             overview = in.readString();
             original_language = in.readString();
             original_title = in.readString();
             release_date = in.readString();
+            runtime = in.readString();
+            status=in.readString();
             poster_path = in.readString();
-            popularity = in.readDouble();
-            video = in.readString();
-            vote_average = in.readDouble();
-            vote_count = in.readDouble();
-        }
+            vote_average = in.readString();
+            vote_count = in.readString();
+            trailer_id = in.readString();
+            genre_id=  in.readString();
 
+        }
     /*
      The constructor2 is a default constructor which initializes all the variables.
    */
-    public ArrayObj(){
-        this.poster_path =" ";
-        this.title=" ";
-        this.adult=" ";
-        this.backdrop_path=" ";
-        this.overview=" ";
-        this.original_title=" ";
-        this.original_language= " ";
-        this.release_date=" ";
-        this.popularity= 0.0;
-        this.video =" ";
-        this.vote_average=0.0;
-        this.vote_count=0.0;
+    public ArrayObj() {
+        this.id = "1";
+        this.adult = " ";
+        this.backdrop_path = " ";
+        this.overview = " ";
+        this.original_language = " ";
+        this.original_title = " ";
+        this.release_date = " ";
+        this.runtime = " ";
+        this.status = " ";
+        this.poster_path = " ";
+        this.vote_average = "0.0";
+        this.vote_count = "0.0";
+        this.trailer_id = " ";
+        this.genre_id = " ";
+
     }
 
     @Override
@@ -73,21 +78,24 @@ public class ArrayObj implements Parcelable{
 
     @Override
     public void writeToParcel(Parcel parcel, int i) {
-        parcel.writeString(title);
+        parcel.writeString(id);
         parcel.writeString(adult);
         parcel.writeString(backdrop_path);
         parcel.writeString(overview);
         parcel.writeString(original_language);
         parcel.writeString(original_title);
         parcel.writeString(release_date);
+        parcel.writeString(runtime);
+        parcel.writeString(status);
         parcel.writeString(poster_path);
-        parcel.writeDouble(popularity);
-        parcel.writeString(video);
-        parcel.writeDouble(vote_average);
-        parcel.writeDouble(vote_count);
+        parcel.writeString(vote_average);
+        parcel.writeString(vote_count);
+        parcel.writeString(trailer_id);
+        parcel.writeString(genre_id);
+
     }
 
-    public final Parcelable.Creator<ArrayObj> CREATOR = new Parcelable.Creator<ArrayObj>() {
+    public final static Parcelable.Creator<ArrayObj> CREATOR = new Parcelable.Creator<ArrayObj>() {
         @Override
         public ArrayObj createFromParcel(Parcel parcel) {
             return new ArrayObj(parcel);

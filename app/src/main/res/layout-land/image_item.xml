@@ -9,8 +9,8 @@
     <com.example.android.moviestrends.AdapterPackage.SquaredImageView
         android:id="@+id/grid_image"
         android:scaleType="fitCenter"
-        android:layout_width="80dp"
-        android:layout_height="150dp"
+        android:layout_width="20dp"
+        android:layout_height="50dp"
         android:layout_centerHorizontal="true"
         android:layout_alignParentTop="true"
         android:listSelector="@drawable/touch_selector"

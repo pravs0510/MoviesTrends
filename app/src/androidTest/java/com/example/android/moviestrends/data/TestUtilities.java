@@ -57,9 +57,9 @@ public class TestUtilities extends AndroidTestCase {
         movieValues.put(movieTrendsContract.MoviesEntry.MOVIE_NAME, "MINIONS");
         movieValues.put(movieTrendsContract.MoviesEntry.POSTER_PATH, "XYZ");
         movieValues.put(movieTrendsContract.MoviesEntry.OVERVIEW, "minions movies");
-        movieValues.put(movieTrendsContract.MoviesEntry.RATING, "6.5/10");
+     //   movieValues.put(movieTrendsContract.MoviesEntry.RATING, "6.5/10");
         movieValues.put(movieTrendsContract.MoviesEntry.RELEASE_DATE, "2015-01-01");
-        movieValues.put(movieTrendsContract.MoviesEntry.INS_TMS, "2015-09-10-00.00.00");
+    //    movieValues.put(movieTrendsContract.MoviesEntry.INS_TMS, "2015-09-10-00.00.00");
 
 
         return movieValues;
@@ -76,9 +76,9 @@ public class TestUtilities extends AndroidTestCase {
         testValues.put(movieTrendsContract.MoviesEntry.MOVIE_NAME, "MINIONS");
         testValues.put(movieTrendsContract.MoviesEntry.POSTER_PATH, "XYZ");
         testValues.put(movieTrendsContract.MoviesEntry.OVERVIEW, "minions movies");
-        testValues.put(movieTrendsContract.MoviesEntry.RATING, "6.5/10");
+    //    testValues.put(movieTrendsContract.MoviesEntry.RATING, "6.5/10");
         testValues.put(movieTrendsContract.MoviesEntry.RELEASE_DATE, "2015-01-01");
-        testValues.put(movieTrendsContract.MoviesEntry.INS_TMS, "2015-09-10-00.00.00");
+     //   testValues.put(movieTrendsContract.MoviesEntry.INS_TMS, "2015-09-10-00.00.00");
 
         return testValues;
     }

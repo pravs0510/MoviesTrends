@@ -4,11 +4,11 @@
     android:layout_height="match_parent"
     tools:context="com.example.android.moviestrends.DetailActivityFragment">
     <ScrollView
-        android:layout_width="fill_parent" android:layout_height="fill_parent"
-        android:id="@+id/scrollView">
+        android:layout_width="fill_parent" android:layout_height="wrap_content"
+        android:id="@+id/scrollView1">
     <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:orientation="horizontal"
             android:id= "@+id/relayout">
             <!--Image view for the poster-->
@@ -76,7 +76,6 @@
         android:paddingTop="5dp"
         android:paddingLeft="5dp"
         android:text="Rating" />
-
         <TextView
             android:id="@+id/rating"
             android:layout_width="wrap_content"
@@ -132,11 +131,9 @@
                 android:background="@drawable/button"
                 android:textColor="#FFFFFF"
                 android:text="Favorite"
-                android:layout_marginRight="5dp"
-                android:layout_gravity="center_horizontal"
-                />
-
-
+                android:layout_marginLeft="40dp"
+                android:layout_marginRight="10dp"
+                android:layout_gravity="center_horizontal" />
         </LinearLayout>
         <TextView
             android:id="@+id/overview"
@@ -175,10 +172,13 @@
             android:paddingLeft="5dp"
             android:paddingRight="5dp"
             android:text="(0)"/>
-
     </RelativeLayout>
+
     </ScrollView>
-
+    <ListView
+        android:id="@+id/list1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/scrollView1">
+    </ListView>
 </RelativeLayout>
-
-

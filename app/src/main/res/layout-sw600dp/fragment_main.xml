@@ -21,7 +21,8 @@
         android:layout_gravity="center"
         android:background="#607D8B"
         android:descendantFocusability="afterDescendants"
-        android:layout_alignParentTop="true" />
+        android:layout_alignParentTop="true"
+        style= "@style/MovieStyle"/>
 
 
 </FrameLayout>

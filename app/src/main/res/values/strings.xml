@@ -9,6 +9,7 @@
     <string name="sortDefault">popularity.desc</string>
     <string name="sort_by">sort_by</string>
     <string name="movie_base_url">http://api.themoviedb.org/3/discover/movie?</string>
+    <string name="movie_base1_url">http://api.themoviedb.org/3/movie?</string>
     <string name="image_base_url">http://image.tmdb.org/t/p/</string>
     <string name="tmdb_image_size">w185</string>
     <string name="pref_sortType">Sort By</string>
@@ -26,8 +27,13 @@
     <string name="pref_sort_label_rating">Highest-Rated</string>
     <string name="title_activity_details">Details</string>
     <string name="Movies_key">Movies_key</string>
+    <string name="id">id</string>
     <string name="title_activity_splash_screen">MovieTrends</string>
     <string name="poster_path">poster_path</string>
+    <string name="favMovie">favMovie</string>
+    <string name="FavoriteMovie">Favorite Movie</string>
+
+    <string name="belongs_to_collection">belongs_to_collection</string>
     <string name="overview">overview</string>
     <string name="Ratings">Ratings</string>
     <string name="Release">release_date</string>
@@ -44,15 +50,52 @@
     <string name="backdrop_path">backdrop_path</string>
     <string name="adult">adult</string>
     <string name="byTen">/10</string>
+    <string name="users"> users </string>
 
     <!-- Test strings for constructors -->
     <string name="test">test</string>
     <!-- Details_key for the details activity parcelable-->
     <string name="Details_key">Details_key</string>
+    <!-- Details_Reviews_key for the details reviews activity parcelable-->
+    <string name="Details_Reviews_key">Details_Reviews_key</string>
 
 <!-- Update the apikey provided in README text in the tag below . Replace the xxxx with the key -->
 
     <string name="apiKey">b5589027deee41f235c2e8085fbe846e</string>
     <string name="SortPrev">SortPrev</string>
+    <string name="append_to_response">append_to_response</string>
+    <string name="trailers_reviews">trailers,reviews</string>
+    <string name="genres">genres</string>
+    <string name="runtime">runtime</string>
+    <string name="status">status</string>
+    <string name="source">source</string>
+    <string name="genre_name">name</string>
+    <string name="trailers">trailers</string>
+    <string name="Trailer">Trailer</string>
+    <string name="No_Trailer">No Trailer</string>
+    <string name="type">type</string>
+    <string name="youtube">youtube</string>
+    <string name="trailer_name">name</string>
+    <string name="trailer_source">source</string>
+    <string name="trailer_type">type</string>
+    <string name="reviews">reviews</string>
+    <string name="reviews_results">results</string>
+    <string name="reviews_author">author</string>
+    <string name="content">content</string>
+    <string name="YOUTUBE_BASE_URL">https://api.themoviedb.org/3/movie/5?</string>
+    <string name="Yes">Yes</string>
+    <string name="Cancel">Cancel</string>
+    <string name="YOUTUBE_PART">part</string>
+    <string name="YOUTUBE_Q">q</string>
+    <string name="YOUTUBE_key">key</string>
+    <string name="Official">Official</string>
+    <string name="YOUTUBE_URL">https://www.youtube.com/watch?v=</string>
+    <string name="action_share">Share</string>
+    <string name="snippet">snippet</string>
+    <string name="maxResults">maxResults</string>
+    <string name="search">Search</string>
+    <string name="failed">Failed to initialize Youtube Player</string>
+    <string name="NoReviews">No Reviews</string>
+    <string name="title_activity_review">Reviews</string>
 
 </resources>

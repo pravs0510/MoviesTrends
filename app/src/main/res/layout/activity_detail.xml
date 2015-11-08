@@ -1,6 +1,7 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools" android:id="@+id/fragment"
-    class="com.example.android.moviestrends.PlaceholderFragment"
+    xmlns:tools="http://schemas.android.com/tools" android:id="@+id/move_detail_container"
+    class="com.example.android.moviestrends.DetailActivityFragment"
     tools:ignore="MergeRootFrame"
     tools:layout="@layout/fragment_detail" android:layout_width="match_parent"
-    android:layout_height="match_parent" />
+    android:layout_height="match_parent"
+    tools:context="com.example.android.moviestrends.DetailActivityFragment"/>
