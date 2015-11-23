@@ -47,6 +47,10 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
 
+import butterknife.Bind;
+import butterknife.ButterKnife;
+import butterknife.OnClick;
+
 import static android.widget.ImageView.ScaleType.CENTER_CROP;
 
 //import android.support.v7.widget.RecyclerView;
@@ -62,17 +66,20 @@ public class DetailActivityFragment extends Fragment {
     private static boolean mFavoriteExits = false;
     private static ArrayList<ReviewsObj> movieReviews = new ArrayList<>();
     private DetailActivityAdaptor adaptor;
-    private TextView title;
-    private ImageView poster;
-    private TextView runtime;
-    private TextView genre;
-    private TextView overview;
-    private TextView rating;
-    private Button trailer;
-    private ImageView backdrop;
-    private TextView status;
-    TextView Reviews_cnt;
-    TextView Reviews;
+   // private TextView title;
+
+    @Bind(R.id.detail_text) TextView title;
+    @Bind(R.id.poster_path) ImageView poster;
+    @Bind(R.id.runtime) TextView runtime;
+    @Bind(R.id.genre) TextView genre;
+    @Bind(R.id.overview) TextView overview;
+    @Bind(R.id.rating) TextView rating;
+    @Bind(R.id.trailer) Button trailer;
+    @Bind(R.id.favorite) Button fav;
+    @Bind(R.id.backdrop_path) ImageView backdrop;
+    @Bind(R.id.status) TextView status;
+    @Bind(R.id.Reviews_cnt) TextView Reviews_cnt;
+    @Bind(R.id.Reviews_txt) TextView Reviews;
     int reviewSize;
     private String mVideo = null;
     static final String DETAIL_URI = "URI";
@@ -192,42 +199,33 @@ public class DetailActivityFragment extends Fragment {
             movieDetails = arguments.getParcelable(DetailActivityFragment.DETAIL_URI);
             mFavorite = arguments.getBoolean(DetailActivityFragment.FAV);
         } else {
-
             Intent intent = getActivity().getIntent();
             movieDetails.original_title = intent.getStringExtra(intent.EXTRA_TEXT);
-
             if (intent == null || movieDetails.original_title == null) {
 
                 final View rootView = inflater.inflate(R.layout.dummy_detail, container, false);
-                title = (TextView) rootView.findViewById(R.id.Dummy_text);
-
-                title.setText("Select the movie");
+                //ButterKnife.bind(this, rootView);
+                TextView dummyTitle =  (TextView) rootView.findViewById(R.id.Dummy_text);
+                        dummyTitle.setText("Select the movie");
                 return rootView;
-
             }
-
             movieDetails.id = intent.getStringExtra(getString(R.string.id));
             movieDetails.poster_path = intent.getStringExtra(getString(R.string.poster_path));
             mFavorite = intent.getBooleanExtra(getString(R.string.favMovie), false);
         }
         final View rootView = inflater.inflate(R.layout.fragment_detail, container, false);
-
+        ButterKnife.bind(this,rootView);
         if (savedInstanceState == null) {
             if (mFavorite == true) {
                 getFavoriteMovieDetails(movieDetails.id);
                 getReviewDetails(movieDetails.id);
-
             }
         }
-        // Find the title from the detail layout and set the text view
-        title = (TextView) rootView.findViewById(R.id.detail_text);
         if (rowsFetched == false) {
             title.setText(movieDetails.original_title);
         } else {
             title.setText(movieDetails.original_title + " (" + movieDetails.release_date.substring(0, 4) + ")");
         }
-        // Find the poster_path from the detail layout and set the image view
-        poster = ((ImageView) rootView.findViewById(R.id.poster_path));
         final String url = this.getString(R.string.image_base_url) + this.getString(R.string.tmdb_image_size);
         poster.setScaleType(CENTER_CROP);
         //String url = this.getString(R.string.image_base_url) + this.getString(R.string.tmdb_image_size) + detailParcelable.posterPath;
@@ -237,23 +235,11 @@ public class DetailActivityFragment extends Fragment {
                 .placeholder(R.drawable.error)
                 .error(R.drawable.placeholder)
                 .into(poster);
-        // Find the runtime from the detail layout and set the text view
-        runtime = (TextView) rootView.findViewById(R.id.runtime);
         runtime.setText(movieDetails.runtime);
-        // Find the genre from the detail layout and set the text view
-        genre = (TextView) rootView.findViewById(R.id.genre);
         genre.setText(movieDetails.genre_id);
-        // Find the overView from the detail layout and set the text view
-        overview = (TextView) rootView.findViewById(R.id.overview);
         overview.setText(movieDetails.overview);
-        // Find the rating from the detail layout and set the text view
-        rating = (TextView) rootView.findViewById(R.id.rating);
         rating.setText(movieDetails.vote_average + getString(R.string.byTen) + movieDetails.vote_count + getString(R.string.users));
-        // Find the status from the detail layout and set the text view
-        status = (TextView) rootView.findViewById(R.id.status);
         status.setText(movieDetails.status);
-        // Find the backdrop from the detail layout and set the image view
-        backdrop = ((ImageView) rootView.findViewById(R.id.backdrop_path));
         backdrop.setScaleType(CENTER_CROP);
         Picasso.with(getActivity())
                 .load(url + movieDetails.backdrop_path)
@@ -261,98 +247,72 @@ public class DetailActivityFragment extends Fragment {
                 .placeholder(R.drawable.error)
                 .error(R.drawable.placeholder)
                 .into(backdrop);
-        // Find the trailer from the detail layout and set Onclick Listener
-        trailer = (Button) rootView.findViewById(R.id.trailer);
-        trailer.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View view) {
-
-                startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(mVideo)));
-                Log.i("Video", "Video Playing....");
-            }
-
-        });
-
-        // Find the trailer from the detail layout and set Onclick Listener. Check if the movie is already favorite
-        // if yes --> open dialog box to ask users if the want to remove it or keep it
-        //          if they want to remove it  call deleteFavoriteMovie
-        // if no --> then insert the movie into favorite table by calling insertFavoriteMovie
-        Button fav = (Button) rootView.findViewById(R.id.favorite);
-        fav.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View view1) {
-                mFavoriteExits = false;
-
-                long favMovieId = insertFavoriteMovie(movieDetails);
-                Log.e("Insert QUERY ", "favMovieId, :" + favMovieId);
-                if (!mFavoriteExits) {
-                    for (ReviewsObj reviewsObj : movieReviews) {
-                        if (reviewsObj.author.equals(getString(R.string.NoReviews))) {
-                            Log.e("Insert QUERY ", "NO reviews to add ");
-                        } else {
-                            long rev = insertMovieReview(movieDetails.id, reviewsObj);
-                        }
-                    }
-                } else {
-                    AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(
-                            getActivity());
-                    // set title
-                    alertDialogBuilder.setTitle(getString(R.string.FavoriteMovie));
-                    // set dialog message
-                    alertDialogBuilder.setMessage("This Movie is already your favorite. Do you want to remove from the list");
-                    alertDialogBuilder.setCancelable(false);
-                    alertDialogBuilder.setPositiveButton(getString(R.string.Yes), new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int id) {
-                            // if this button is clicked, close
-                            // current activity
-                            deleteFavoriteMovie(movieDetails.id);
-                        }
-                    }).setNegativeButton(getString(R.string.Cancel), new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int id) {
-                            // if this button is clicked, just close
-                            // the dialog box and do nothing
-                            dialog.cancel();
-                        }
-                    });
-                    // create alert dialog
-                    AlertDialog alertDialog = alertDialogBuilder.create();
-                    // show it
-                    alertDialog.show();
-                }
-            }
-        });
         // Compute review size and popluate the reviewcnt, set onclick listener for either clicking review cnt or Reviews
         reviewSize = movieReviews.size();
-        Reviews_cnt = (TextView) rootView.findViewById(R.id.Reviews_cnt);
         Reviews_cnt.setText("(" + reviewSize + ")");
-        Reviews_cnt.setOnClickListener(new View.OnClickListener() {
-           @Override
-           public void onClick(View v) {
-               viewReviews();
-           }
-        });
-        Reviews = (TextView) rootView.findViewById(R.id.Reviews_txt);
-        Reviews.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view1) {
-                viewReviews();
-            }
-        });
         // if it is a 2 pane mode, then reviews will be populated within the listview
         if (arguments != null) {
             ListView listView = (ListView) rootView.findViewById(R.id.list1);
             adaptor = new DetailActivityAdaptor(getActivity(), R.layout.review_grid, movieReviews);
             listView.setAdapter(adaptor);
             adaptor.setmMovieData(movieReviews);
-        /*      listView.setOnTouchListener(new View.OnTouchListener() {
-                // Setting on Touch Listener for handling the touch inside ScrollView
-                @Override
-                public boolean onTouch(View v, MotionEvent event) {
-                    // Disallow the touch request for parent scroll on touch of child view
-                    v.getParent().requestDisallowInterceptTouchEvent(true);
-                    return false;
-                }
-            });*/
         }
         return rootView;
+    }
+
+    @OnClick(R.id.trailer)
+    public void playTrailer(){
+        startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(mVideo)));
+        Log.i("Video", "Video Playing....");
+    }
+
+    @OnClick(R.id.favorite)
+    public void clickFavorite(){
+        // if yes --> open dialog box to ask users if the want to remove it or keep it
+        //          if they want to remove it  call deleteFavoriteMovie
+        // if no --> then insert the movie into favorite table by calling insertFavoriteMovie
+        mFavoriteExits = false;
+
+        long favMovieId = insertFavoriteMovie(movieDetails);
+        Log.e("Insert QUERY ", "favMovieId, :" + favMovieId);
+        if (!mFavoriteExits) {
+            for (ReviewsObj reviewsObj : movieReviews) {
+                if (reviewsObj.author.equals(getString(R.string.NoReviews))) {
+                    Log.e("Insert QUERY ", "NO reviews to add ");
+                } else {
+                    long rev = insertMovieReview(movieDetails.id, reviewsObj);
+                }
+            }
+        } else {
+            AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(
+                    getActivity());
+            // set title
+            alertDialogBuilder.setTitle(getString(R.string.FavoriteMovie));
+            // set dialog message
+            alertDialogBuilder.setMessage("This Movie is already your favorite. Do you want to remove from the list");
+            alertDialogBuilder.setCancelable(false);
+            alertDialogBuilder.setPositiveButton(getString(R.string.Yes), new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int id) {
+                    // if this button is clicked, close
+                    // current activity
+                    deleteFavoriteMovie(movieDetails.id);
+                }
+            }).setNegativeButton(getString(R.string.Cancel), new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int id) {
+                    // if this button is clicked, just close
+                    // the dialog box and do nothing
+                    dialog.cancel();
+                }
+            });
+            // create alert dialog
+            AlertDialog alertDialog = alertDialogBuilder.create();
+            // show it
+            alertDialog.show();
+        }
+    }
+    @OnClick({R.id.Reviews_txt,R.id.Reviews_cnt} )
+    public void clickReviews(){
+        viewReviews();
     }
 
     public long insertMovieReview(String MOVIE_ID, ReviewsObj reviewInsertDetails) {
@@ -504,7 +464,7 @@ public class DetailActivityFragment extends Fragment {
         }
     }
 
-    private void setTextforView() {
+    private void setTextForView() {
         final String url = this.getString(R.string.image_base_url) + this.getString(R.string.tmdb_image_size);
         poster.setScaleType(CENTER_CROP);
         Picasso.with(getActivity())
@@ -518,7 +478,6 @@ public class DetailActivityFragment extends Fragment {
         if (movieDetails.backdrop_path.equals("null") || movieDetails.backdrop_path.equals(null)) {
             movieDetails.backdrop_path = (movieDetails.poster_path);
         }
-
         Picasso.with(getActivity())
                 .load(url + movieDetails.backdrop_path)
                 .fit()
@@ -530,39 +489,8 @@ public class DetailActivityFragment extends Fragment {
         genre.setText(movieDetails.genre_id);
         rating.setText(movieDetails.vote_average + "/10 by " + movieDetails.vote_count + " users");
         runtime.setText(movieDetails.runtime + " min");
-        trailer.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View view) {
-
-                if (movieDetails.trailer_id.equals(" ")) {
-                    trailer.setText(getString(R.string.No_Trailer));
-                    Toast.makeText(getActivity(), "No trailer available for this movie", Toast.LENGTH_LONG).show();
-                } else {
-                    startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(mVideo)));
-                    Log.i("Video", "Video Playing....");
-                }
-            }
-
-        });
-
         final int reviewSize = movieReviews.size();
         Reviews_cnt.setText("(" + reviewSize + ")");
-
-        Reviews.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View view1) {
-
-                // Bundle bundle = new Bundle();
-                if (arguments == null) {
-                    if (reviewSize > 0) {
-                        Intent intent = new Intent(getActivity(), ReviewActivity.class).putExtra(Intent.EXTRA_TEXT, movieReviews)
-                                .putExtra(getString(R.string.poster_path), movieDetails.poster_path);
-                        startActivity(intent);
-                    } else {
-                        Toast.makeText(getActivity(), "This movie has no reviews", Toast.LENGTH_LONG).show();
-                    }
-                }
-            }
-        });
-
     }
 
     private void getVideoId() {
@@ -571,199 +499,199 @@ public class DetailActivityFragment extends Fragment {
         videoTask.execute(movieDetails.id);
     }
 
-    protected class dataMovieTask extends AsyncTask<String, Integer, ArrayObj> {
-        private final String LOG_TAG = dataMovieTask.class.getSimpleName();
+        protected class dataMovieTask extends AsyncTask<String, Integer, ArrayObj> {
+            private final String LOG_TAG = dataMovieTask.class.getSimpleName();
 
 
-        private ArrayObj movieDataParse(String movieDataJ) throws JSONException {
-            final String OWM_GENRES = getString(R.string.genres);
-            final String OWM_GENERES_NAME = getString(R.string.genre_name);
-            final String OWM_OVERVIEW = getString(R.string.overview);
-            final String OWM_RUNTIME = getString(R.string.runtime);
-            final String OWM_BTC = getString(R.string.belongs_to_collection);
-            final String OWM_POSTER = getString(R.string.poster_path);
-            final String OWM_TITLE = getString(R.string.original_title);
-            final String OWM_STATUS = getString(R.string.status);
-            final String OWM_ORIGINAL_LANG = getString(R.string.original_language);
-            final String OWM_REL_DTE = getString(R.string.Release);
-            final String OWM_VOTE_AVG = getString(R.string.vote_average);
-            final String OWM_VOTE_CNT = getString(R.string.vote_count);
-            final String OWM_ADULT = getString(R.string.adult);
-            final String OWM_ID = getString(R.string.id);
-            final String OWM_TRAILER = getString(R.string.trailers);
-            final String OWM_YOUTUBE = getString(R.string.youtube);
-            final String OWM_SOURCE = getString(R.string.source);
-            final String OWM_REVIEWS = getString(R.string.reviews);
-            final String OWM_RESULTS = getString(R.string.results);
-            final String OWM_AUTHOR = getString(R.string.reviews_author);
-            final String OWM_CONTENT = getString(R.string.content);
-            final String OWM_BACKDROP = getString(R.string.backdrop_path);
-            final String OWM_TYPE = getString(R.string.type);
-            final String OWM_NAME = getString(R.string.trailer_name);
+            private ArrayObj movieDataParse(String movieDataJ) throws JSONException {
+                final String OWM_GENRES = getString(R.string.genres);
+                final String OWM_GENERES_NAME = getString(R.string.genre_name);
+                final String OWM_OVERVIEW = getString(R.string.overview);
+                final String OWM_RUNTIME = getString(R.string.runtime);
+                final String OWM_BTC = getString(R.string.belongs_to_collection);
+                final String OWM_POSTER = getString(R.string.poster_path);
+                final String OWM_TITLE = getString(R.string.original_title);
+                final String OWM_STATUS = getString(R.string.status);
+                final String OWM_ORIGINAL_LANG = getString(R.string.original_language);
+                final String OWM_REL_DTE = getString(R.string.Release);
+                final String OWM_VOTE_AVG = getString(R.string.vote_average);
+                final String OWM_VOTE_CNT = getString(R.string.vote_count);
+                final String OWM_ADULT = getString(R.string.adult);
+                final String OWM_ID = getString(R.string.id);
+                final String OWM_TRAILER = getString(R.string.trailers);
+                final String OWM_YOUTUBE = getString(R.string.youtube);
+                final String OWM_SOURCE = getString(R.string.source);
+                final String OWM_REVIEWS = getString(R.string.reviews);
+                final String OWM_RESULTS = getString(R.string.results);
+                final String OWM_AUTHOR = getString(R.string.reviews_author);
+                final String OWM_CONTENT = getString(R.string.content);
+                final String OWM_BACKDROP = getString(R.string.backdrop_path);
+                final String OWM_TYPE = getString(R.string.type);
+                final String OWM_NAME = getString(R.string.trailer_name);
 
-            //    String trailerDescription;
-            ArrayObj movie = new ArrayObj();
-            ReviewsObj review = new ReviewsObj();
-            movieReviews.clear();
-            JSONObject movieJson = new JSONObject(movieDataJ);
-            movie.adult = movieJson.getString(OWM_ADULT);
+                //    String trailerDescription;
+                ArrayObj movie = new ArrayObj();
+                ReviewsObj review = new ReviewsObj();
+                movieReviews.clear();
+                JSONObject movieJson = new JSONObject(movieDataJ);
+                movie.adult = movieJson.getString(OWM_ADULT);
 
-            movie.id = movieJson.getString(OWM_ID);
+                movie.id = movieJson.getString(OWM_ID);
 
-            try {
-                JSONArray genresArray = movieJson.getJSONArray(OWM_GENRES);
-                JSONObject genresDetails = genresArray.getJSONObject(0);
-                movie.genre_id = genresDetails.getString(OWM_GENERES_NAME);
-            } catch (Exception j) {
-                movie.genre_id = "Not Specified ";
+                try {
+                    JSONArray genresArray = movieJson.getJSONArray(OWM_GENRES);
+                    JSONObject genresDetails = genresArray.getJSONObject(0);
+                    movie.genre_id = genresDetails.getString(OWM_GENERES_NAME);
+                } catch (Exception j) {
+                    movie.genre_id = "Not Specified ";
+                }
+                //   JSONArray titleArray = movieJson.getJSONArray(OWM_BTC);
+                // JSONObject titleDetails =titleArray.getJSONObject(0);
+                movie.original_title = movieJson.getString(OWM_TITLE);
+                movie.poster_path = movieJson.getString(OWM_POSTER);
+                movie.backdrop_path = movieJson.getString(OWM_BACKDROP);
+
+                movie.original_language = movieJson.getString(OWM_ORIGINAL_LANG);
+                movie.overview = movieJson.getString(OWM_OVERVIEW);
+                movie.release_date = movieJson.getString(OWM_REL_DTE);
+                movie.runtime = movieJson.getString(OWM_RUNTIME);
+                movie.status = movieJson.getString(OWM_STATUS);
+                movie.vote_average = movieJson.getString(OWM_VOTE_AVG);
+                movie.vote_count = movieJson.getString(OWM_VOTE_CNT);
+                JSONObject trailerArray = movieJson.getJSONObject(OWM_TRAILER);
+                try {
+
+                    for (int i = trailerArray.length() - 1; i >= 0; i--) {
+                        JSONObject trailerDetails = trailerArray.getJSONArray(OWM_YOUTUBE).getJSONObject(i);
+                        String type = trailerDetails.getString(OWM_TYPE);
+                        String name = trailerDetails.getString(OWM_NAME);
+                        if (type.equals(getString(R.string.Trailer)) && (name.contains("1") || name.contains(getString(R.string.Official)))) {
+                            movie.trailer_id = trailerDetails.getString(OWM_SOURCE);
+                            i = -1;
+                        }
+                    }
+
+                } catch (Exception e) {
+                    movie.trailer_id = " ";
+                }
+
+                JSONObject reviewsArray = movieJson.getJSONObject(OWM_REVIEWS);
+                try {
+                    for (int i = 0; i < reviewsArray.length() - 1; i++) {
+                        review = new ReviewsObj();
+                        JSONObject reviewDetails = reviewsArray.getJSONArray(OWM_RESULTS).getJSONObject(i);
+                        review.author = reviewDetails.getString(OWM_AUTHOR);
+                        review.content = reviewDetails.getString(OWM_CONTENT);
+                        movieReviews.add(review);
+                    }
+                } catch (Exception e) {
+                    Log.e(LOG_TAG, "No Reviews for the movie");
+                }
+                return movie;
             }
-            //   JSONArray titleArray = movieJson.getJSONArray(OWM_BTC);
-            // JSONObject titleDetails =titleArray.getJSONObject(0);
-            movie.original_title = movieJson.getString(OWM_TITLE);
-            movie.poster_path = movieJson.getString(OWM_POSTER);
-            movie.backdrop_path = movieJson.getString(OWM_BACKDROP);
 
-            movie.original_language = movieJson.getString(OWM_ORIGINAL_LANG);
-            movie.overview = movieJson.getString(OWM_OVERVIEW);
-            movie.release_date = movieJson.getString(OWM_REL_DTE);
-            movie.runtime = movieJson.getString(OWM_RUNTIME);
-            movie.status = movieJson.getString(OWM_STATUS);
-            movie.vote_average = movieJson.getString(OWM_VOTE_AVG);
-            movie.vote_count = movieJson.getString(OWM_VOTE_CNT);
-            JSONObject trailerArray = movieJson.getJSONObject(OWM_TRAILER);
-            try {
+            @Override
+            protected ArrayObj doInBackground(String... params) {
+                HttpURLConnection urlConnection = null;
+                BufferedReader reader = null;
+                String moviesDataJson = null;
+                String apikey = getString(R.string.apiKey);
 
-                for (int i = trailerArray.length() - 1; i >= 0; i--) {
-                    JSONObject trailerDetails = trailerArray.getJSONArray(OWM_YOUTUBE).getJSONObject(i);
-                    String type = trailerDetails.getString(OWM_TYPE);
-                    String name = trailerDetails.getString(OWM_NAME);
-                    if (type.equals(getString(R.string.Trailer)) && (name.contains("1") || name.contains(getString(R.string.Official)))) {
-                        movie.trailer_id = trailerDetails.getString(OWM_SOURCE);
-                        i = -1;
+                try {
+                    final String MOVIES_BASE_URL = getString(R.string.movie_base1_url);
+                    final String SORT_BY = getString(R.string.sort_by);
+                    final String api_key = getString(R.string.apikey);
+                    Uri builtUri = Uri.parse(MOVIES_BASE_URL).buildUpon()
+                            .appendPath(params[0])
+                            .appendQueryParameter(api_key, apikey)
+                            .appendQueryParameter(getString(R.string.append_to_response), getString(R.string.trailers_reviews))
+                            .build();
+                    URL url = new URL(builtUri.toString());
+                    urlConnection = (HttpURLConnection) url.openConnection();
+                    urlConnection.setRequestMethod("GET");
+                    urlConnection.connect();
+                    // Read the input stream into a String
+                    InputStream inputStream = urlConnection.getInputStream();
+                    StringBuffer buffer = new StringBuffer();
+                    if (inputStream == null) {
+                        return null;
+                    }
+                    //  Log.e(LOG_TAG, "Buffer reader started");
+                    reader = new BufferedReader(new InputStreamReader(inputStream));
+
+                    String line;
+                    int j = 0;
+                    while ((line = reader.readLine()) != null) {
+                        // Since it's JSON, adding a newline isn't necessary (it won't affect parsing)
+                        // But it does make debugging a *lot* easier if you print out the completed
+                        // buffer for debugging.
+                        buffer.append(line + "\n");
+                        j++;
+                        publishProgress(j);
+
+                    }
+                    if (buffer.length() == 0) {
+                        // Stream was empty.  No point in parsing.
+                        return null;
+                    }
+                    moviesDataJson = buffer.toString();
+                    // Log.v(LOG_TAG, "Movie JSON String: " + moviesDataJson);
+                } catch (IOException e) {
+                    Log.e(LOG_TAG, "Error", e);
+                    return null;
+                } finally {
+                    if (urlConnection != null) {
+                        urlConnection.disconnect();
+                    }
+                    if (reader != null) {
+                        try {
+                            reader.close();
+                        } catch (final IOException e) {
+                            Log.e(LOG_TAG, "Error closing the stream", e);
+                        }
                     }
                 }
-
-            } catch (Exception e) {
-                movie.trailer_id = " ";
-            }
-
-            JSONObject reviewsArray = movieJson.getJSONObject(OWM_REVIEWS);
-            try {
-                for (int i = 0; i < reviewsArray.length() - 1; i++) {
-                    review = new ReviewsObj();
-                    JSONObject reviewDetails = reviewsArray.getJSONArray(OWM_RESULTS).getJSONObject(i);
-                    review.author = reviewDetails.getString(OWM_AUTHOR);
-                    review.content = reviewDetails.getString(OWM_CONTENT);
-                    movieReviews.add(review);
+                try {
+                    return movieDataParse(moviesDataJson);
+                } catch (JSONException e) {
+                    Log.e(LOG_TAG, e.getMessage(), e);
+                    e.printStackTrace();
                 }
-            } catch (Exception e) {
-                Log.e(LOG_TAG, "No Reviews for the movie");
-            }
-            return movie;
-        }
-
-        @Override
-        protected ArrayObj doInBackground(String... params) {
-            HttpURLConnection urlConnection = null;
-            BufferedReader reader = null;
-            String moviesDataJson = null;
-            String apikey = getString(R.string.apiKey);
-
-            try {
-                final String MOVIES_BASE_URL = getString(R.string.movie_base1_url);
-                final String SORT_BY = getString(R.string.sort_by);
-                final String api_key = getString(R.string.apikey);
-                Uri builtUri = Uri.parse(MOVIES_BASE_URL).buildUpon()
-                        .appendPath(params[0])
-                        .appendQueryParameter(api_key, apikey)
-                        .appendQueryParameter(getString(R.string.append_to_response), getString(R.string.trailers_reviews))
-                        .build();
-                URL url = new URL(builtUri.toString());
-                urlConnection = (HttpURLConnection) url.openConnection();
-                urlConnection.setRequestMethod("GET");
-                urlConnection.connect();
-                // Read the input stream into a String
-                InputStream inputStream = urlConnection.getInputStream();
-                StringBuffer buffer = new StringBuffer();
-                if (inputStream == null) {
-                    return null;
-                }
-                //  Log.e(LOG_TAG, "Buffer reader started");
-                reader = new BufferedReader(new InputStreamReader(inputStream));
-
-                String line;
-                int j = 0;
-                while ((line = reader.readLine()) != null) {
-                    // Since it's JSON, adding a newline isn't necessary (it won't affect parsing)
-                    // But it does make debugging a *lot* easier if you print out the completed
-                    // buffer for debugging.
-                    buffer.append(line + "\n");
-                    j++;
-                    publishProgress(j);
-
-                }
-                if (buffer.length() == 0) {
-                    // Stream was empty.  No point in parsing.
-                    return null;
-                }
-                moviesDataJson = buffer.toString();
-                // Log.v(LOG_TAG, "Movie JSON String: " + moviesDataJson);
-            } catch (IOException e) {
-                Log.e(LOG_TAG, "Error", e);
                 return null;
-            } finally {
-                if (urlConnection != null) {
-                    urlConnection.disconnect();
-                }
-                if (reader != null) {
-                    try {
-                        reader.close();
-                    } catch (final IOException e) {
-                        Log.e(LOG_TAG, "Error closing the stream", e);
+            }
+
+            @Override
+            protected void onPostExecute(ArrayObj arrayObjs) {
+                super.onPostExecute(arrayObjs);
+                if (arrayObjs != null) {
+                    movieDetails = null;
+                    movieDetails = arrayObjs;
+                    rowsFetched = true;
+                    mVideo = getString(R.string.YOUTUBE_URL) + movieDetails.trailer_id;
+                    if (arguments != null) {
+                        adaptor.setmMovieData(movieReviews);
                     }
+                    setTextForView();
+                    //        LocalBroadcastManager.getInstance(getActivity()).sendBroadcast(new Intent(SHAREDACTIONUPDATE));
+
+                    // mImageAdapter.setGridData(mMoviesAdaptor);
+                    //     progressBar.setVisibility(View.INVISIBLE);
+                    //Log.e(LOG_TAG, "mMoviesAdaptor " + mMoviesAdaptor);
                 }
             }
-            try {
-                return movieDataParse(moviesDataJson);
-            } catch (JSONException e) {
-                Log.e(LOG_TAG, e.getMessage(), e);
-                e.printStackTrace();
+
+            @Override
+            protected void onPreExecute() {
+                super.onPreExecute();
+                //    progressBar.setVisibility(View.VISIBLE);
             }
-            return null;
-        }
 
-        @Override
-        protected void onPostExecute(ArrayObj arrayObjs) {
-            super.onPostExecute(arrayObjs);
-            if (arrayObjs != null) {
-                movieDetails = null;
-                movieDetails = arrayObjs;
-                rowsFetched = true;
-                mVideo = getString(R.string.YOUTUBE_URL) + movieDetails.trailer_id;
-                if (arguments != null) {
-                    adaptor.setmMovieData(movieReviews);
-                }
-                setTextforView();
-                //        LocalBroadcastManager.getInstance(getActivity()).sendBroadcast(new Intent(SHAREDACTIONUPDATE));
-
-                // mImageAdapter.setGridData(mMoviesAdaptor);
-                //     progressBar.setVisibility(View.INVISIBLE);
-                //Log.e(LOG_TAG, "mMoviesAdaptor " + mMoviesAdaptor);
+            @Override
+            protected void onProgressUpdate(Integer... progress) {
+                super.onProgressUpdate(progress[0]);
+                //      progressBar.setProgress(progress[0]);
             }
-        }
 
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-            //    progressBar.setVisibility(View.VISIBLE);
         }
-
-        @Override
-        protected void onProgressUpdate(Integer... progress) {
-            super.onProgressUpdate(progress[0]);
-            //      progressBar.setProgress(progress[0]);
-        }
-
-    }
 
 }

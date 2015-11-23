@@ -134,6 +134,11 @@ public class MovieProvider extends ContentProvider {
             }
 
             @Override
+            public void setExtras(Bundle extras) {
+
+            }
+
+            @Override
             public int getPosition() {
                 return 0;
             }

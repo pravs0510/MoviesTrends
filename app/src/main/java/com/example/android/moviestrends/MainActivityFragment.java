@@ -55,6 +55,7 @@ public class MainActivityFragment extends Fragment {
     private ImageAdapter mImageAdapter;
     private static boolean favMovies = false;
     GridView gridView;
+    Boolean isConnected;
     private int mPosition = ListView.INVALID_POSITION;
     public interface Callback{
         /*A callback interface that all activities containing this fragment must implement. This mechanism allows activities to be notified of item Selections  */
@@ -67,14 +68,19 @@ public class MainActivityFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        if (savedInstanceState == null || !savedInstanceState.containsKey(getString(R.string.Movies_key))) {
-          //  updateMovie();
-            mMoviesAdaptor = new ArrayList();
+         isConnected = NetUtils.hasConnectivity(getActivity(), false);
+        if (isConnected== false){
+            Toast.makeText(getActivity(),"No Internet Connection",Toast.LENGTH_SHORT).show();
+            favMovies = true;
         } else {
-            mMoviesAdaptor = savedInstanceState.getParcelableArrayList(getString(R.string.Movies_key));// using the key retrieve the data
-            sortTypePrev = savedInstanceState.getString(getString(R.string.SortPrev));
-            mPosition    = savedInstanceState.getInt("position");
+            if (savedInstanceState == null || !savedInstanceState.containsKey(getString(R.string.Movies_key))) {
+                //  updateMovie();
+                mMoviesAdaptor = new ArrayList();
+            } else {
+                mMoviesAdaptor = savedInstanceState.getParcelableArrayList(getString(R.string.Movies_key));// using the key retrieve the data
+                sortTypePrev = savedInstanceState.getString(getString(R.string.SortPrev));
+                mPosition = savedInstanceState.getInt("position");
+            }
         }
         // Add this line in order for this fragment to handle menu events.
         setHasOptionsMenu(true);
@@ -124,17 +130,21 @@ public class MainActivityFragment extends Fragment {
        Private class which is used to get the sort preferences from the settings and pass it to the Async task. This method does not require any input parameters
      */
      void updateMovie() {
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
-        String sortType = prefs.getString(getString(R.string.pref_sortKey), getString(R.string.sortDefault));
+         if (isConnected == true) {
+             SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
+             String sortType = prefs.getString(getString(R.string.pref_sortKey), getString(R.string.sortDefault));
 
-        if ((sortType != sortTypePrev) || mMoviesAdaptor.isEmpty()) {
-            sortTypePrev = sortType;
-            moviesDataTask moviesTask = new moviesDataTask();
-            moviesTask.execute(sortType);
-        }
-         if(mPosition!=ListView.INVALID_POSITION){
-             gridView.setSelection(mPosition);
-             gridView.smoothScrollToPosition(mPosition);
+             if ((sortType != sortTypePrev) || mMoviesAdaptor.isEmpty()) {
+                 sortTypePrev = sortType;
+                 moviesDataTask moviesTask = new moviesDataTask();
+                 moviesTask.execute(sortType);
+             }
+             if (mPosition != ListView.INVALID_POSITION) {
+                 gridView.setSelection(mPosition);
+                 gridView.smoothScrollToPosition(mPosition);
+             }
+         }else {
+             updateFavoriteMovie();
          }
     }
      void updateFavoriteMovie() {
@@ -179,6 +189,7 @@ public class MainActivityFragment extends Fragment {
                              Bundle savedInstanceState) {
 
        // updateMovie();
+
         mImageAdapter = new ImageAdapter(getActivity()
                 , R.layout.image_item
                 , mMoviesAdaptor);

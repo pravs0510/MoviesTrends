@@ -2,7 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.android.moviestrends" >
 
-    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
     <application
         android:allowBackup="true"
@@ -19,6 +20,7 @@
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" /
+                
             </intent-filter>>
             -->
         </activity>
@@ -62,14 +64,6 @@
             android:name=".data.MovieProvider"
             android:authorities="com.example.android.movietrends.app" />
 
-        <activity
-            android:name=".ReviewActivity"
-            android:label="@string/title_activity_review"
-            android:parentActivityName=".DetailActivity" >
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.example.android.moviestrends.DetailActivity" />
-        </activity>
     </application>
 
 </manifest>

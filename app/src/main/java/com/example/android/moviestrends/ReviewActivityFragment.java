@@ -21,6 +21,9 @@ import com.squareup.picasso.Target;
 
 import java.util.ArrayList;
 
+import butterknife.Bind;
+import butterknife.ButterKnife;
+
 
 /**
  * A placeholder fragment containing a simple view.
@@ -28,7 +31,8 @@ import java.util.ArrayList;
 public class ReviewActivityFragment extends Fragment {
 
     private static ArrayList<ReviewsObj> movieReviews = new ArrayList<>();
-    ListView listView;
+   // ListView listView;
+    @Bind(R.id.list) ListView listView;
     private DetailActivityAdaptor adaptor;
     private String poster_path ="";
 
@@ -57,6 +61,7 @@ public class ReviewActivityFragment extends Fragment {
         //  return inflater.inflate(R.layout.fragment_review, container, false);
 
         final View rootView = inflater.inflate(R.layout.fragment_review, container, false);
+        ButterKnife.bind(this,rootView);
         if (savedInstanceState == null) {
             //   getVideoId();
             Intent intent = getActivity().getIntent();
@@ -86,10 +91,6 @@ public class ReviewActivityFragment extends Fragment {
                         Log.d("TAG", "PrepareLoad");
                     }
         });
-
-
-
-        listView = (ListView) rootView.findViewById(R.id.list);
         adaptor = new DetailActivityAdaptor(getActivity(), R.layout.review_grid, movieReviews);
         listView.setAdapter(adaptor);
         adaptor.setmMovieData(movieReviews);
